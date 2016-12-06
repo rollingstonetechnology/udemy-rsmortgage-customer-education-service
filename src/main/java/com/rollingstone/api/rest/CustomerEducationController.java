@@ -39,7 +39,7 @@ public class CustomerEducationController extends AbstractRestController {
             produces = {"application/json", "application/xml"})
     @ResponseStatus(HttpStatus.CREATED)
     public void createCustomerEducation(@RequestBody Education education,
-                                 HttpServletRequest request, HttpServletResponse response) {
+                                 HttpServletRequest request, HttpServletResponse response) throws Exception {
     	Education createdEducation = this.customerEducationService.createEducation(education);
         response.setHeader("Location", request.getRequestURL().append("/").append(createdEducation.getId()).toString());
     }
@@ -108,7 +108,7 @@ public class CustomerEducationController extends AbstractRestController {
             produces = {"application/json", "application/xml"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateCustomerEducation(@PathVariable("id") Long id, @RequestBody Education education,
-                                 HttpServletRequest request, HttpServletResponse response) {
+                                 HttpServletRequest request, HttpServletResponse response) throws Exception {
         checkResourceFound(this.customerEducationService.getEducation(id));
         if (id != education.getId()) throw new HTTP400Exception("ID doesn't match!");
         this.customerEducationService.updateEducation(education);

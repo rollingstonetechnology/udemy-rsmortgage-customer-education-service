@@ -33,20 +33,68 @@ public class RsMortgageCustomerEducationService {
 
     @Autowired
     GaugeService gaugeService;
+    
+    @Autowired
+   	private CustomerClient customerClient;
 
     public RsMortgageCustomerEducationService() {
     }
 
-    public Education createEducation(Education education) {
-        return customerEducationRepository.save(education);
+    public Education createEducation(Education education) throws Exception {
+    	Education createdEducation = null;
+    	if (education != null && education.getCustomer() != null){
+    		
+    		log.info("In service education create"+ education.getCustomer().getId());
+    		if (customerClient == null){
+        		log.info("In customerClient null got customer");
+    		}
+    		else {
+    			log.info("In customerClient not null got customer");
+    		}
+    		
+    		Customer customer = customerClient.getCustomer((new Long(education.getCustomer().getId())));
+    		
+    		if (customer != null){
+    			createdEducation  = customerEducationRepository.save(education);
+    		}else {
+    			log.info("Invalid Customer");
+    			throw new Exception("Invalid Customer");
+    		}
+    	}
+    	else {
+    			throw new Exception("Invalid Customer");
+    	}
+        return createdEducation;
     }
 
     public Education getEducation(long id) {
         return customerEducationRepository.findOne(id);
     }
 
-    public void updateEducation(Education contact) {
-    	customerEducationRepository.save(contact);
+    public void updateEducation(Education education) throws Exception {
+    	Education createdEducation = null;
+    	if (education != null && education.getCustomer() != null){
+    		
+    		log.info("In service education create"+ education.getCustomer().getId());
+    		if (customerClient == null){
+        		log.info("In customerClient null got customer");
+    		}
+    		else {
+    			log.info("In customerClient not null got customer");
+    		}
+    		
+    		Customer customer = customerClient.getCustomer((new Long(education.getCustomer().getId())));
+    		
+    		if (customer != null){
+    			createdEducation  = customerEducationRepository.save(education);
+    		}else {
+    			log.info("Invalid Customer");
+    			throw new Exception("Invalid Customer");
+    		}
+    	}
+    	else {
+    			throw new Exception("Invalid Customer");
+    	}
     }
 
     public void deleteEducation(Long id) {
