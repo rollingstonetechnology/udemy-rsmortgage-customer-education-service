@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.rollingstone.dao.jpa.RsMortgageCustomerEducationRepository;
 import com.rollingstone.domain.Contact;
 import com.rollingstone.domain.Customer;
@@ -40,6 +41,7 @@ public class RsMortgageCustomerEducationService {
     public RsMortgageCustomerEducationService() {
     }
 
+    @HystrixCommand(fallbackMethod = "createEducationWithoutValidation")
     public Education createEducation(Education education) throws Exception {
     	Education createdEducation = null;
     	if (education != null && education.getCustomer() != null){
@@ -55,6 +57,8 @@ public class RsMortgageCustomerEducationService {
     		Customer customer = customerClient.getCustomer((new Long(education.getCustomer().getId())));
     		
     		if (customer != null){
+    			log.info("Customer Validation Successful. Creating Education wit valid customer.");
+
     			createdEducation  = customerEducationRepository.save(education);
     		}else {
     			log.info("Invalid Customer");
@@ -64,6 +68,16 @@ public class RsMortgageCustomerEducationService {
     	else {
     			throw new Exception("Invalid Customer");
     	}
+        return createdEducation;
+    }
+    
+    public Education createEducationWithoutValidation(Education education) throws Exception {
+    	Education createdEducation = null;
+    
+		log.info("Customer Validation Failed. Creating Education without validation.");
+
+    	createdEducation  = customerEducationRepository.save(education);
+    	
         return createdEducation;
     }
 
